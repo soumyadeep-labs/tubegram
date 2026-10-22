@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: tubegram
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: ALLOWED_DOMAINS
+        value: youtube.com,youtu.be,instagram.com
+      - key: RATE_LIMIT_PER_MINUTE
+        value: "10"
+      - key: MAX_VIDEO_DURATION_MINUTES
+        value: "30"
+      - key: MAX_VIDEO_SIZE_MB
+        value: "200"
+      - key: DOWNLOAD_TIMEOUT_MS
+        value: "600000"
+      - key: YTDLP_JS_RUNTIME
+        value: node
