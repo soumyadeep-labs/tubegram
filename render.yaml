@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: tubegram
+    runtime: node
+    plan: free
+    buildCommand: npm ci && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/health
+    autoDeployTrigger: commit
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: NODE_ENV
+        value: production
+      - key: ALLOWED_DOMAINS
+        value: youtube.com,youtu.be,instagram.com
+      - key: RATE_LIMIT_PER_MINUTE
+        value: "10"
+      - key: MAX_VIDEO_DURATION_MINUTES
+        value: "30"
+      - key: MAX_VIDEO_SIZE_MB
+        value: "200"
+      - key: DOWNLOAD_TIMEOUT_MS
+        value: "600000"
+      - key: YTDLP_JS_RUNTIME
+        value: node
