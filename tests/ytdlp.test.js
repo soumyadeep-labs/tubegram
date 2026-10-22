@@ -26,7 +26,7 @@ test('buildInfoArgs passes the URL as its own argument', () => {
 test('buildFormatSelector prefers MP4 and caps the height', () => {
   assert.equal(
     buildFormatSelector('best'),
-    'bv*[vcodec^=avc1]+ba[ext=m4a]/b[vcodec^=avc1]/bv*[ext=mp4]+ba[ext=m4a]/bv*+ba/b',
+    'bv*[vcodec^=avc1]+ba[ext=m4a]/b[vcodec^=avc1]/b[ext=mp4]/bv*[ext=mp4]+ba[ext=m4a]/bv*+ba/b',
   );
   assert.match(buildFormatSelector('720'), /height<=720/);
   assert.match(buildFormatSelector('720'), /vcodec\^=avc1/);
@@ -70,9 +70,13 @@ test('buildDownloadArgs builds safe MP4 arguments', () => {
   assert.ok(args.includes('--remux-video'));
   assert.ok(args.includes('--max-filesize'));
   assert.equal(args[args.indexOf('--max-filesize') + 1], `${config.maxVideoSizeMb}M`);
-  assert.equal(
-    args[args.indexOf('--match-filter') + 1],
-    `duration <= ${config.maxVideoDurationMinutes * 60}`,
+  assert.deepEqual(
+    args.reduce(
+      (filters, value, index) =>
+        value === '--match-filter' ? [...filters, args[index + 1]] : filters,
+      [],
+    ),
+    ['!duration', `duration <= ${config.maxVideoDurationMinutes * 60}`],
   );
   assert.match(args[args.indexOf('--format') + 1], /height<=720/);
   assert.ok(!args.includes('--extract-audio'));

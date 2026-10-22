@@ -1,6 +1,6 @@
 {
   "name": "tubegram",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "private": true,
   "description": "Paste a YouTube or Instagram link and save the video. One Next.js app, powered by yt-dlp and ffmpeg.",
   "license": "MIT",

@@ -2,6 +2,13 @@
 
 All notable changes to Tubegram are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.1] - 2026-10-22
+
+### Fixed
+
+- Instagram reels no longer fail with `OUTPUT_MISSING` when Instagram omits the video duration. The duration filter now accepts unknown durations while still rejecting known videos over the limit.
+- “Best available” now falls back to a single-file H.264/AAC MP4 before VP9/AV1 DASH. Instagram reels download as broadly compatible H.264 instead of VP9-in-MP4.
+
 ## [2.1.0] - 2026-10-22
 
 ### Changed

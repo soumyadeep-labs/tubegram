@@ -2,7 +2,7 @@
 
 > Paste a YouTube or Instagram link. Preview it, choose MP4 or MP3, and save it where you want.
 
-![Version](https://img.shields.io/badge/version-2.1.0-ff7a45)
+![Version](https://img.shields.io/badge/version-2.1.1-ff7a45)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 ## What it does
@@ -87,7 +87,7 @@ npm run tools:update # download the latest yt-dlp now
 ### `GET /api/health`
 
 ```json
-{ "status": "ok", "version": "2.1.0", "timestamp": "2026-10-22T10:00:00.000Z" }
+{ "status": "ok", "version": "2.1.1", "timestamp": "2026-10-22T10:00:00.000Z" }
 ```
 
 ### `POST /api/info`
