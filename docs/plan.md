@@ -1,4 +1,7 @@
 # Tubegram: project plan
+
+> Superseded by [plan-v2.md](plan-v2.md). Kept for history. The Docker/Express architecture below is no longer used.
+
 ## 1. Goal
 Tubegram is an open-source web app. A user pastes an Instagram or YouTube URL and the video downloads to their device, into a folder they choose. It runs as a public hosted instance (Vercel + Render) and can also be self-hosted by anyone with one command.
 

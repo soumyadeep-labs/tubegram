@@ -11,6 +11,9 @@ node_modules/
 .env.*
 !.env.example
 
+# Downloaded tool binaries
+.tools/
+
 # Logs and temp files
 *.log
 npm-debug.log*

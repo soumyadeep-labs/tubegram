@@ -2,6 +2,21 @@
 
 All notable changes to Tubegram are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.0] - 2026-10-22
+
+### Changed
+
+- Removed Docker entirely: no `Dockerfile`, `.dockerignore`, or container build.
+- Requirements now install through npm. A `postinstall` script downloads the standalone `yt-dlp` binary into `.tools/`, and `ffmpeg-static` + `@ffprobe-installer/ffprobe` provide ffmpeg and ffprobe for Linux, macOS, and Windows.
+- Render deployment now uses its native Node runtime: `npm ci && npm run build`, then `npm start`.
+- `YTDLP_PATH`, `FFMPEG_PATH`, and `FFPROBE_PATH` now default to the bundled binaries and only fall back to `PATH`.
+- Added `npm run tools:update` to refresh yt-dlp on demand.
+
+### Added
+
+- `scripts/install-tools.js` and `lib/tools.js` for cross-platform tool discovery and installation.
+- Tests for platform asset selection and binary path resolution.
+
 ## [2.0.0] - 2026-10-22
 
 ### Changed

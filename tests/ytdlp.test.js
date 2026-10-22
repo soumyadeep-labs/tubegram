@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import path from 'node:path';
 import test from 'node:test';
 
 import { config } from '../lib/config.js';
@@ -7,6 +8,7 @@ import {
   buildDownloadArgs,
   buildFormatSelector,
   buildInfoArgs,
+  buildToolEnvironment,
   parseVideoInfo,
 } from '../lib/ytdlp.js';
 
@@ -30,6 +32,27 @@ test('buildFormatSelector prefers MP4 and caps the height', () => {
   assert.match(buildFormatSelector('720'), /vcodec\^=avc1/);
   assert.throws(() => buildFormatSelector('nope'), AppError);
   assert.throws(() => buildFormatSelector('0'), AppError);
+});
+
+test('buildToolEnvironment puts bundled tool directories first on PATH', () => {
+  const original = { PATH: '/usr/bin' };
+  const env = buildToolEnvironment({
+    ffmpegPath: '/opt/tools/ffmpeg',
+    ffprobePath: '/opt/tools/ffprobe',
+    env: original,
+  });
+
+  assert.equal(env.PATH, ['/opt/tools', '/usr/bin'].join(path.delimiter));
+  assert.equal(original.PATH, '/usr/bin');
+
+  assert.equal(
+    buildToolEnvironment({
+      ffmpegPath: 'ffmpeg',
+      ffprobePath: 'ffprobe',
+      env: original,
+    }),
+    original,
+  );
 });
 
 test('buildDownloadArgs builds safe MP4 arguments', () => {

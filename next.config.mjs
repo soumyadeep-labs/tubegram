@@ -1,9 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   poweredByHeader: false,
-  // Render builds a self-contained server; local builds stay in normal mode so
-  // `next start` works without extra copying.
-  ...(process.env.NEXT_OUTPUT === 'standalone' ? { output: 'standalone' } : {}),
+  // These packages resolve native binaries at runtime; do not bundle them.
+  serverExternalPackages: ['ffmpeg-static', '@ffprobe-installer/ffprobe'],
 };
 
 export default nextConfig;

@@ -1,12 +1,15 @@
 services:
   - type: web
     name: tubegram
-    runtime: docker
+    runtime: node
     plan: free
-    dockerfilePath: ./Dockerfile
+    buildCommand: npm ci && npm run build
+    startCommand: npm start
     healthCheckPath: /api/health
-    autoDeploy: true
+    autoDeployTrigger: commit
     envVars:
+      - key: NODE_VERSION
+        value: "22"
       - key: NODE_ENV
         value: production
       - key: ALLOWED_DOMAINS

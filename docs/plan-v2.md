@@ -13,8 +13,8 @@ Tubegram is an open-source web app. A user pastes an Instagram or YouTube URL an
 | Part | Choice | Why |
 |---|---|---|
 | App | Next.js (App Router), one project | Pages and API routes in one place. One `npm install`, one lockfile, no proxy. |
-| Download engine | `yt-dlp` command-line tool, called from the server code | Already supports YouTube and Instagram. We do not write scrapers. |
-| Merging / MP3 | `ffmpeg` (v1.5) | Combines video+audio streams and converts to MP3. |
+| Download engine | `yt-dlp` standalone binary, downloaded by an npm `postinstall` script | Already supports YouTube and Instagram. We do not write scrapers. No Python needed. |
+| Merging / MP3 | `ffmpeg` from `ffmpeg-static` plus `ffprobe` from `@ffprobe-installer/ffprobe` | Combines video+audio streams and converts to MP3, on Linux, macOS, and Windows. |
 | State | Plain React `useState` | No Redux, no extra state library. |
 | Server storage | None | The server streams yt-dlp's output straight to the browser. No files kept. |
 
@@ -27,7 +27,7 @@ Tubegram is an open-source web app. A user pastes an Instagram or YouTube URL an
 - APK (v2): Android native save dialog.
 
 ## 4. Running locally (the only "self-hosting")
-Requirements: Node 20+, `yt-dlp` and `ffmpeg` installed on the machine.
+Requirements: Node 20.9+. `npm install` downloads yt-dlp and installs ffmpeg + ffprobe for the current OS; no separate tool setup and no Docker.
 ```
 git clone <repo>
 cd tubegram
@@ -37,7 +37,7 @@ npm run dev
 The README documents just this. No docker-compose, no self-hosting guide, no `.env` tutorial beyond a short `.env.example`.
 
 ## 5. Public deployment
-**Vercel cannot run the download part.** Its serverless functions are short-lived, have no room for the yt-dlp and ffmpeg programs, and cap response size and time. A video download hits all of those limits. So the public instance goes on **Render as a single Web Service** built from **one Dockerfile** (Node + yt-dlp + ffmpeg). That Dockerfile exists only so Render can build the app; it is not advertised as a self-hosting method.
+**Vercel cannot run the download part.** Its serverless functions are short-lived, have no room for the yt-dlp and ffmpeg programs, and cap response size and time. A video download hits all of those limits. So the public instance goes on **Render as a single native Node Web Service**. yt-dlp, ffmpeg, and ffprobe are installed by npm during the build, so there is no Dockerfile and no system package setup.
 
 Public-instance safety (all values from environment variables, with low defaults):
 - Domain allowlist (youtube.com, youtu.be, instagram.com).
@@ -52,8 +52,9 @@ Use Capacitor. Because the app has server code, the APK cannot be a fully offlin
 ```
 /app            pages and API routes (Next.js)
 /components     UI pieces
-/lib            yt-dlp wrapper, URL validation, rate limiting
-Dockerfile      for Render only
+/lib            yt-dlp wrapper, URL validation, rate limiting, tool discovery
+/scripts        automatic yt-dlp installer
+render.yaml     Render native Node blueprint
 .env.example
 README.md, LICENSE (MIT)
 ```
@@ -65,17 +66,17 @@ README.md, LICENSE (MIT)
 
 **M2: UI v1.** URL input, Download button, loading and error states, folder picker with fallback. *Done when:* a pasted link ends with a file saved in the chosen folder.
 
-**M3: Deploy v1.** One Dockerfile, Render Web Service, env vars set. *Done when:* the public URL works end to end.
+**M3: Deploy v1.** Render native Node Web Service, env vars set. *Done when:* the public URL works end to end.
 
 **M4: v1.5.** `/api/info`, preview card, quality and format selectors, ffmpeg. *Done when:* picking 720p MP4 or MP3 gives the right file.
 
-**M5: Hardening.** Update yt-dlp on every deploy, clear errors for private/deleted videos, basic tests.
+**M5: Hardening.** `npm ci` downloads the latest yt-dlp on every deploy, clear errors for private/deleted videos, basic tests.
 
 **M6 (v2): APK.** Capacitor wrapper pointing at the hosted site, native save dialog, signed APK in GitHub Releases.
 
 ## 9. Risks
 1. **Platforms block cloud server IPs.** YouTube and Instagram often reject requests from hosts like Render. Instagram especially may need a logged-in session. Expect the public instance to fail sometimes; running locally from a home connection works far more reliably.
-2. **yt-dlp breaks regularly.** Update it on every deploy.
+2. **yt-dlp breaks regularly.** Every Render build runs `npm ci`, which downloads the latest yt-dlp; redeploy when downloads start failing.
 3. **Terms of service and copyright.** Downloading from these platforms violates their terms, and downloading copyrighted content without permission can be illegal. The README must say Tubegram is for content you own or have permission to download. A public instance can be suspended or receive takedown notices.
 4. **Bandwidth and cost.** Streaming videos uses a lot of bandwidth; Render's free tier sleeps when idle and will not hold up under real traffic.
 5. **Folder picker** works only in desktop Chrome/Edge, hence the fallback.
